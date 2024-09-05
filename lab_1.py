@@ -41,18 +41,20 @@ def diagonal_values(encryption_table):
     return list_diag
 
 #C_h=diagonal_values(encryption_table)
+C_h=[10, 17, 4, 11, 5, 12, 17, 9, 2, 1, 19, 6, 14, 9, 11, 19, 3, 10, 4, 7]
 #print(C_h)
 
-def determination_function(C_h, P_distribution_M, P_distribution_K, encryption_table): 
+
+def determination_function(c_value, P_distribution_M, P_distribution_K, encryption_table): 
     max_prob = -1
-    best_plaintext = None
+    best_plaintext = ''
     
     for j in range(len(P_distribution_M)):
         total_prob = 0
         for i in range(len(P_distribution_K)):
-            if encryption_table[i][j] == C_h:
-                joint_prob = P_distribution_M[j] * P_distribution_K[i]
-                total_prob += joint_prob
+                if encryption_table[i][j] == c_value:
+                    joint_prob = P_distribution_M[j] * P_distribution_K[i]
+                    total_prob += joint_prob
         
         if total_prob > max_prob:
             max_prob = total_prob
@@ -60,6 +62,10 @@ def determination_function(C_h, P_distribution_M, P_distribution_K, encryption_t
     
     return best_plaintext
 
-C_h=8
-best_M = determination_function(C_h, P_distribution_M, P_distribution_K, encryption_table)
-print(f'for C_{C_h} is M_{best_M}')
+
+for c_value in C_h:
+    best_M = determination_function(c_value, P_distribution_M, P_distribution_K, encryption_table)
+    print(f'Для C_h={c_value} более подходящий текст M_{best_M}')
+
+    
+
