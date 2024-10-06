@@ -33,7 +33,6 @@ encryption_table = np.array([
 ])
 
 #print(encryption_table)
-
 def diagonal_values(encryption_table):
     list_diag = []
     for i in range(len(encryption_table)):
@@ -45,27 +44,68 @@ C_h=[10, 17, 4, 11, 5, 12, 17, 9, 2, 1, 19, 6, 14, 9, 11, 19, 3, 10, 4, 7]
 #print(C_h)
 
 
-def determination_function(c_value, P_distribution_M, P_distribution_K, encryption_table): 
-    max_prob = -1
-    best_plaintext = ''
-    
-    for j in range(len(P_distribution_M)):
+def calculate_P_C(P_distribution_M, P_distribution_K, encryption_table):
+    P_C = [0] * len(encryption_table)  # Масив для ймовірностей P(C)
+    for c_value in range(len(encryption_table)):
         total_prob = 0
-        for i in range(len(P_distribution_K)):
-                if encryption_table[i][j] == c_value:
-                    joint_prob = P_distribution_M[j] * P_distribution_K[i]
-                    total_prob += joint_prob
-        
-        if total_prob > max_prob:
-            max_prob = total_prob
-            best_plaintext = j
+        for i in range(len(P_distribution_M)):
+            for j in range(len(P_distribution_K)):
+                if encryption_table[j][i] == c_value:
+                    total_prob += P_distribution_M[i] * P_distribution_K[j]
+        P_C[c_value] = total_prob
     
-    return best_plaintext
+    return P_C
 
-
-for c_value in C_h:
-    best_M = determination_function(c_value, P_distribution_M, P_distribution_K, encryption_table)
-    print(f'Для C_h={c_value} более подходящий текст M_{best_M}')
-
+def calculate_P_M_C(P_distribution_M, P_distribution_K, encryption_table):
+    P_M_C = np.zeros((len(P_distribution_M), len(encryption_table)))  # Матриця P(M, C)
     
+    for i in range(len(P_distribution_M)):
+        for j in range(len(P_distribution_K)):
+            c_value = encryption_table[j][i]
+            P_M_C[i][c_value] += P_distribution_M[i] * P_distribution_K[j]
+    
+    return P_M_C
 
+# Обчислення P(C)
+P_C = calculate_P_C(P_distribution_M, P_distribution_K, encryption_table)
+print("Розподіл P(C):", P_C)
+
+# Обчислення P(M, C)
+P_M_C = calculate_P_M_C(P_distribution_M, P_distribution_K, encryption_table)
+print("Спільний розподіл P(M, C):")
+print(P_M_C)
+
+def calculate_P_M_given_C(P_M_C, P_C):
+    P_M_given_C = np.zeros(P_M_C.shape)
+    
+    for c in range(len(P_C)):
+        if P_C[c] > 0:  # Перевіряємо, що P(C) не дорівнює нулю
+            for m in range(len(P_M_C)):
+                P_M_given_C[m][c] = P_M_C[m][c] / P_C[c]
+    
+    return P_M_given_C
+
+# Обчислення P(C)
+P_C = calculate_P_C(P_distribution_M, P_distribution_K, encryption_table)
+
+# Обчислення P(M, C)
+P_M_C = calculate_P_M_C(P_distribution_M, P_distribution_K, encryption_table)
+
+# Обчислення P(M|C)
+P_M_given_C = calculate_P_M_given_C(P_M_C, P_C)
+print("Умовна ймовірність P(M|C):")
+print(P_M_given_C)
+
+
+def bayesian_decision_function(P_M_given_C):
+    delta_B = []
+    
+    for c in range(P_M_given_C.shape[1]):  # Проходимо по всіх значеннях C
+        best_m = np.argmax(P_M_given_C[:, c])  # Знаходимо M з максимальним P(M|C)
+        delta_B.append(best_m)
+    
+    return delta_B
+
+# Обчислення Баєсівської вирішуючої функції
+delta_B = bayesian_decision_function(P_M_given_C)
+print("Баєсівська вирішуюча функція δ_B для кожного C:", delta_B)
