@@ -65,6 +65,9 @@ def calculate_P_M_given_C(P_M_C, P_C):
 P_M_C = calculate_P_M_C(P_distribution_M, P_distribution_K, encryption_table)
 P_C = calculate_P_C(P_distribution_M, P_distribution_K, encryption_table)
 
+
+print(f"\nP(C):\n{P_C}")
+
 #Перевірка (сума ймовірностей =1)
 sum=0
 for i in range(len(P_distribution_K)):
@@ -77,7 +80,7 @@ P_M_given_C = calculate_P_M_given_C(P_M_C, P_C)
 
 print("\nP(M|C):")
 for row in P_M_given_C:
-    print([round(val, 2) for val in row])
+    print([round(i, 2) for i in row])
 
 #P(C|M)
 def calculate_P_C_given_M(P_M_given_C):
@@ -90,7 +93,7 @@ def calculate_P_C_given_M(P_M_given_C):
 P_C_given_M=calculate_P_C_given_M(P_M_given_C)
 print("\nP(C|M):")
 for row in P_C_given_M:
-    print([round(i,3) for i in row])
+    print([round(i,2) for i in row])
 
 #Deterministic array
 def find_deterministic_array(P_M_given_C):
@@ -99,7 +102,7 @@ def find_deterministic_array(P_M_given_C):
         max_probability = max(P_M_given_C[i])  
         deterministic_array[i] = P_M_given_C[i].argmax(int(max_probability)) 
     return deterministic_array
-
+    
 array_final=find_deterministic_array(P_M_given_C)
 print(f"\nDeterministic function:{array_final}")
 
