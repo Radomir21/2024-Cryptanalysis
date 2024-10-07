@@ -29,7 +29,7 @@ encryption_table = np.array([
 ])
 
 
-# Масив для ймовірностей P(C)
+#P(C)
 def calculate_P_C(P_distribution_M, P_distribution_K, encryption_table):
     P_C = np.zeros(len(encryption_table))  
     for c_value in range(len(encryption_table)):
@@ -41,7 +41,7 @@ def calculate_P_C(P_distribution_M, P_distribution_K, encryption_table):
         P_C[c_value] = total_prob
     return P_C
 
-
+#P(M,C)
 def calculate_P_M_C(P_distribution_M, P_distribution_K, encryption_table):
     P_M_C = np.zeros((len(P_distribution_M), len(encryption_table)))
     for i in range(len(P_distribution_M)):  
@@ -50,7 +50,7 @@ def calculate_P_M_C(P_distribution_M, P_distribution_K, encryption_table):
             P_M_C[i][c_value] += P_distribution_M[i] * P_distribution_K[j]  
     return P_M_C
 
-
+#P(M|C)
 def calculate_P_M_given_C(P_M_C, P_C):
     P_M_given_C = np.zeros((len(P_distribution_M), len(encryption_table)))
     for i in range(len(P_distribution_M)):
@@ -64,15 +64,13 @@ def calculate_P_M_given_C(P_M_C, P_C):
 # Рахуємо P(M, C) и P(C)
 P_M_C = calculate_P_M_C(P_distribution_M, P_distribution_K, encryption_table)
 P_C = calculate_P_C(P_distribution_M, P_distribution_K, encryption_table)
-for j in P_M_C:
-    print([i for i in j])
 
 #Перевірка (сума ймовірностей =1)
 sum=0
 for i in range(len(P_distribution_K)):
     for j in range(len(P_distribution_M)):
         sum+= P_M_C[i][j]
-#print(sum)
+print(sum)
 
 # Вычисляем P(M|C)
 P_M_given_C = calculate_P_M_given_C(P_M_C, P_C)
@@ -81,4 +79,40 @@ print("\nP(M|C):")
 for row in P_M_given_C:
     print([round(val, 2) for val in row])
 
+#P(C|M)
+def calculate_P_C_given_M(P_M_given_C):
+    P_C_given_M= [[0]*len(P_M_given_C) for _ in range(len(P_M_given_C))]
+    for i in range(len(P_distribution_M)):
+        for j in range(len(encryption_table)):
+            P_C_given_M[i][j] = round(P_M_given_C[j][i],3)
+    return P_C_given_M
 
+P_C_given_M=calculate_P_C_given_M(P_M_given_C)
+print("\nP(C|M):")
+for row in P_C_given_M:
+    print([round(i,3) for i in row])
+
+#Deterministic array
+def find_deterministic_array(P_M_given_C):
+    deterministic_array = [0] * len(P_M_given_C)
+    for i in range(len(P_M_given_C)):  
+        max_probability = max(P_M_given_C[i])  
+        deterministic_array[i] = P_M_given_C[i].argmax(int(max_probability)) 
+    return deterministic_array
+
+array_final=find_deterministic_array(P_M_given_C)
+print(f"\nDeterministic function:{array_final}")
+
+#Deterministic matrix
+def find_deterministic_matrix(array_final):
+    matrix=[0]*len(array_final)
+    for i in range(len(array_final)):
+        matrix[i]= [0]*len(array_final)
+    for i in range(len(array_final)):
+        matrix[i][array_final[i]] = 1
+    return matrix
+
+matrix_final=find_deterministic_matrix(array_final)
+print("\nDeterministic matrix:")
+for row in matrix_final:
+    print([i for i in row])
