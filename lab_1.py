@@ -5,10 +5,6 @@ import sys
 P_distribution_M=[0.24,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.04]
 P_distribution_K=[0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05]
 
-array_of_M=[i for i in range(0,20)]
-array_of_K=[i for i in range(0,20)]
-array_of_C=[i for i in range(0,20)]
-
 encryption_table = np.array([
     [10,13,8,18,12,7,0,6,14,1,9,17,2,16,5,4,11,3,19,15],
     [14,17,11,9,10,6,13,15,5,1,8,19,4,7,12,16,18,0,2,3],
@@ -32,17 +28,6 @@ encryption_table = np.array([
     [17,0,10,19,3,6,1,13,14,15,9,4,18,5,12,11,8,16,2,7]
 ])
 
-#print(encryption_table)
-#def diagonal_values(encryption_table):
- #   list_diag = []
-  #  for i in range(len(encryption_table)):
-   #     list_diag.append(encryption_table[i][i])
-    #return list_diag
-
-#C_h=diagonal_values(encryption_table)
-#C_h=[10, 17, 4, 11, 5, 12, 17, 9, 2, 1, 19, 6, 14, 9, 11, 19, 3, 10, 4, 7]
-#print(C_h)
-
 
 # Масив для ймовірностей P(C)
 def calculate_P_C(P_distribution_M, P_distribution_K, encryption_table):
@@ -56,7 +41,7 @@ def calculate_P_C(P_distribution_M, P_distribution_K, encryption_table):
         P_C[c_value] = total_prob
     return P_C
 
-# Матриця P(M, C)
+
 def calculate_P_M_C(P_distribution_M, P_distribution_K, encryption_table):
     P_M_C = np.zeros((len(P_distribution_M), len(encryption_table)))
     for i in range(len(P_distribution_M)):  
@@ -67,24 +52,27 @@ def calculate_P_M_C(P_distribution_M, P_distribution_K, encryption_table):
 
 
 def calculate_P_M_given_C(P_M_C, P_C):
-    num_rows = P_M_C.shape[0]
-    num_cols = P_M_C.shape[1]
-    P_M_given_C = np.zeros((num_rows, num_cols))
-    for i in range(num_cols):
-        for j in range(num_rows):
+    P_M_given_C = np.zeros((len(P_distribution_M), len(encryption_table)))
+    for i in range(len(P_distribution_M)):
+        for j in range(len(encryption_table)):
             if P_C[i] > 0:  
                 P_M_given_C[j][i] = P_M_C[j][i] / P_C[i]
     return P_M_given_C
 
-# Рахумо P(M, C) и P(C)
+
+
+# Рахуємо P(M, C) и P(C)
 P_M_C = calculate_P_M_C(P_distribution_M, P_distribution_K, encryption_table)
 P_C = calculate_P_C(P_distribution_M, P_distribution_K, encryption_table)
+for j in P_M_C:
+    print([i for i in j])
+
 #Перевірка (сума ймовірностей =1)
 sum=0
 for i in range(len(P_distribution_K)):
     for j in range(len(P_distribution_M)):
         sum+= P_M_C[i][j]
-print(sum)
+#print(sum)
 
 # Вычисляем P(M|C)
 P_M_given_C = calculate_P_M_given_C(P_M_C, P_C)
