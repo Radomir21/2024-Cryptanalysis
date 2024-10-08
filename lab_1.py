@@ -83,15 +83,8 @@ for row in P_M_given_C:
     print([round(i, 2) for i in row])
 
 #P(C|M)
-def calculate_P_C_given_M(P_M_given_C):
-    P_C_given_M= [[0]*len(P_M_given_C) for _ in range(len(P_M_given_C))]
-    for i in range(len(P_distribution_M)):
-        for j in range(len(encryption_table)):
-            P_C_given_M[i][j] = round(P_M_given_C[j][i],3)
-    return P_C_given_M
-
-P_C_given_M=calculate_P_C_given_M(P_M_given_C)
 print("\nP(C|M):")
+P_C_given_M=P_M_given_C.T
 for row in P_C_given_M:
     print([round(i,2) for i in row])
 
@@ -119,3 +112,13 @@ matrix_final=find_deterministic_matrix(array_final)
 print("\nDeterministic matrix:")
 for row in matrix_final:
     print([i for i in row])
+
+def loss_function(P_C,P_C_given_M):
+    lost_function_value = 0
+    for i in range(len(P_C_given_M)):
+        lost_function_value+=P_C[i]*(1 - max(P_C_given_M[i]))
+    return lost_function_value
+
+print("\nLoss function:")
+print(loss_function(P_C,P_C_given_M))
+
