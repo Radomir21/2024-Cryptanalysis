@@ -66,6 +66,9 @@ P_C = calculate_P_C(P_distribution_M, P_distribution_K, encryption_table)
 
 
 print(f"\nP(C):\n{P_C}")
+print("\nP(M,C):")
+for row in P_M_C:
+    print([round(i,3) for i in row])
 
 #Перевірка (сума ймовірностей =1)
 sum=0
@@ -82,10 +85,8 @@ for row in P_M_given_C:
     print([round(i, 2) for i in row])
 
 #P(C|M)
-print("\nP(C|M):")
 P_C_given_M=P_M_given_C.T
-for row in P_C_given_M:
-    print([round(i,2) for i in row])
+
 
 #Deterministic array
 def find_deterministic_array(P_M_given_C):
