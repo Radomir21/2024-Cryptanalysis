@@ -113,26 +113,27 @@ print("\nDeterministic matrix:")
 for row in matrix_final:
     print([i for i in row])
 
-#Loss function
+#Loss function 1
 def loss_function(P_C,P_C_given_M):
     lost_function_value = 0
     for i in range(len(P_C_given_M)):
         lost_function_value+=P_C[i]*(1 - max(P_C_given_M[i]))
     return lost_function_value
 
-print("\nLoss function:")
+print("\nLoss function 1:")
 print(loss_function(P_C,P_C_given_M))
 
-#Stohastic function
+#Stohastic function WOW!!!!(а что можна было и так???)
 stohastic_matrix=P_C_given_M.copy()
 stohastic_matrix[stohastic_matrix - stohastic_matrix.max(axis=1).reshape(-1,1) < -1e-8] = 0
+P_distribution_M_sum = np.sum(np.where(stohastic_matrix != 0, P_distribution_M, 0), axis=1)
+stochastic_matrix_final = np.where(stohastic_matrix != 0, np.round(P_distribution_M / P_distribution_M_sum[:, np.newaxis], 2), 0)
 print("\nStohastic matrix:")
-for row in stohastic_matrix:
-    print([round(i,3) for i in row])
-
- 
+for row in stochastic_matrix_final:
+    print([i for i in row])
 
 
-
-
-
+#Loss function 2
+average_losses = np.round(1 - stochastic_matrix_final, 1)
+print("\nLoss function 2:")
+print(np.sum(P_M_C.T * average_losses))
