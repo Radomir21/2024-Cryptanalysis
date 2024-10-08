@@ -113,6 +113,7 @@ print("\nDeterministic matrix:")
 for row in matrix_final:
     print([i for i in row])
 
+#Loss function
 def loss_function(P_C,P_C_given_M):
     lost_function_value = 0
     for i in range(len(P_C_given_M)):
@@ -121,4 +122,17 @@ def loss_function(P_C,P_C_given_M):
 
 print("\nLoss function:")
 print(loss_function(P_C,P_C_given_M))
+
+#Stohastic function
+stohastic_matrix=P_C_given_M.copy()
+stohastic_matrix[stohastic_matrix - stohastic_matrix.max(axis=1).reshape(-1,1) < -1e-8] = 0
+print("\nStohastic matrix:")
+for row in stohastic_matrix:
+    print([round(i,3) for i in row])
+
+ 
+
+
+
+
 
