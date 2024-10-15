@@ -86,17 +86,19 @@ for row in P_M_given_C:
 
 #P(C|M)
 P_C_given_M=P_M_given_C.T
-
+print("\n-------------------------------")
+for row in P_C_given_M:
+    print([round(i, 2) for i in row])
 
 #Deterministic array
-def find_deterministic_array(P_M_given_C):
-    deterministic_array = [0] * len(P_M_given_C)
-    for i in range(len(P_M_given_C)):  
-        max_probability = max(P_M_given_C[i])  
-        deterministic_array[i] = P_M_given_C[i].argmax(int(max_probability)) 
+def find_deterministic_array(P_C_given_M):
+    deterministic_array = [0] * len(P_C_given_M)
+    for i in range(len(P_C_given_M)):  
+        max_probability = max(P_C_given_M[i])  
+        deterministic_array[i] = P_C_given_M[i].argmax(int(max_probability)) 
     return deterministic_array
     
-array_final=find_deterministic_array(P_M_given_C)
+array_final=find_deterministic_array(P_C_given_M)
 print(f"\nDeterministic function:{array_final}")
 
 #Deterministic matrix
@@ -126,7 +128,10 @@ print(loss_function(P_C,P_C_given_M))
 #Stohastic function WOW!!!!(а что можна было и так???)
 stohastic_matrix=P_C_given_M.copy()
 stohastic_matrix[stohastic_matrix - stohastic_matrix.max(axis=1).reshape(-1,1) < -1e-8] = 0
+for row in stohastic_matrix:
+    print([round(i,3) for i in row])
 P_distribution_M_sum = np.sum(np.where(stohastic_matrix != 0, P_distribution_M, 0), axis=1)
+print(P_distribution_M_sum)
 stochastic_matrix_final = np.where(stohastic_matrix != 0, np.round(P_distribution_M / P_distribution_M_sum[:, np.newaxis], 2), 0)
 print("\nStohastic matrix:")
 for row in stochastic_matrix_final:
