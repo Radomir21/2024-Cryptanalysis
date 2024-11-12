@@ -1,6 +1,6 @@
 #імпорти 
 from collections import Counter
-
+import math 
 
 
 
@@ -28,19 +28,46 @@ with open(output_text_1 ,'w',encoding="utf8") as file:
 #необхiдно розрахувати частоти лiтер i бiграм, а також ентропiю та iндекс вiдповiдностi.
 freq_letters = Counter(text_2)
 
+total_letters_sum = sum(freq_letters.values())
+
+p = []
 for letter in alphabet:
     if letter in freq_letters:
-        print(f"'{letter}': {freq_letters[letter]}")
+        count = freq_letters[letter]
+        prob_letter = count / total_letters_sum
+        p.append(prob_letter)
+        #print(f"'{letter}': {count} (ймовірність: {prob_letter})")
+
+#перевірка
+#print(p)
+print(sum(p))
 
 
+#кількість біграм 
 bigrams = [text_2[i:i+2] for i in range(len(text_2) - 1)]
 bigram_counts = Counter(bigrams)
 
 print("-----------------------------------------------------------------------")
-for bigram, count in bigram_counts.most_common():
-    print(f"'{bigram}': {count}")
+#for bigram, count in bigram_counts.most_common():
+ #   print(f"'{bigram}': {count}")
 
-sum = 0
-for elem in freq_letters:
-    sum+=freq_letters[elem]
-print(sum)
+total_bigrams_sum = sum(bigram_counts.values())
+
+b = []
+for big in bigram_counts:
+    count = bigram_counts[big]
+    prob_bigram = count / total_bigrams_sum
+    b.append(prob_bigram)
+    #print(f"'{big}': {count} (ймовірність: {prob_bigram})")
+
+print("-----------------------------------------------------------------------")
+#перевірка
+#print(b)
+print(sum(b))
+
+#ентропія
+H_1_entropy = 0
+for prob in p:
+    H_1_entropy += 1/len(p)*(-1*(prob*math.log2(prob)))
+
+print(H_1_entropy)
