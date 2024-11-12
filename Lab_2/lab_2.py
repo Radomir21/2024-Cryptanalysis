@@ -78,3 +78,12 @@ for prob in b:
     H_2_entropy += 1/len(b)*(-1*(prob*math.log2(prob)))
 
 print(H_2_entropy)
+
+#індекс відповідності для літер 
+print(freq_letters)
+IC = 0
+N = sum(freq_letters.values()) 
+for freq in (freq_letters.values()):
+    head = freq*(freq- 1)
+    IC += head / (N * (N-1))  
+print(IC)
