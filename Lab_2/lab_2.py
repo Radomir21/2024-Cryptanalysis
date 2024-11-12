@@ -65,9 +65,16 @@ print("-----------------------------------------------------------------------")
 #print(b)
 print(sum(b))
 
-#ентропія
+#ентропія літер
 H_1_entropy = 0
 for prob in p:
     H_1_entropy += 1/len(p)*(-1*(prob*math.log2(prob)))
 
 print(H_1_entropy)
+
+#ентропія біграм
+H_2_entropy = 0
+for prob in b:
+    H_2_entropy += 1/len(b)*(-1*(prob*math.log2(prob)))
+
+print(H_2_entropy)
