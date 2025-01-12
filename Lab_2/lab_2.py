@@ -38,18 +38,26 @@ for letter in alphabet:
         count = freq_letters[letter]
         prob_letter = count / total_letters_sum
         p.append(prob_letter)
-        print(f"'{letter}': {count} (ймовірність: {prob_letter})")
+        #print(f"'{letter}': {count} (ймовірність: {prob_letter})")
 
 #перевірка
-print(sum(p))
+#print(sum(p))
 
 
 #кількість біграм 
 bigrams = [text_2[i:i+2] for i in range(len(text_2) - 1)]
 bigram_counts = Counter(bigrams)
 
-for bigram, count in bigram_counts.most_common():
-    print(f"'{bigram}': {count}")
+bigram_alphabet = [a + b for a in alphabet for b in alphabet]
+
+for bigram in bigram_alphabet:
+    bigram_counts[bigram] = bigram_counts.get(bigram, 0)
+
+print(bigram_counts)
+
+
+#for bigram, count in bigram_counts.most_common():
+    #print(f"'{bigram}': {count}")
 
 total_bigrams_sum = sum(bigram_counts.values())
 
@@ -58,10 +66,10 @@ for big in bigram_counts:
     count = bigram_counts[big]
     prob_bigram = count / total_bigrams_sum
     b.append(prob_bigram)
-    print(f"'{big}': {count} (ймовірність: {prob_bigram})")
+    #print(f"'{big}': {count} (ймовірність: {prob_bigram})")
 
 #перевірка
-print(sum(b))
+#print(sum(b))
 
 print("-----------------------------------------------------------------------")
 #перевірка
@@ -76,18 +84,18 @@ print(H_1_entropy)
 #ентропія біграм
 H_2_entropy = 0
 for prob in b:
-    H_2_entropy += 1/len(b)*(-1*(prob*math.log2(prob)))
+    H_2_entropy += 1/len(b) * (-1 * prob * math.log2(prob) if prob > 0 else 0)
 
 print(H_2_entropy)
 
 #індекс відповідності для літер 
-print(freq_letters)
+#print(freq_letters)
 IC = 0
 N = sum(freq_letters.values()) 
 for freq in (freq_letters.values()):
     head = freq*(freq- 1)
     IC += head / (N * (N-1))  
-print(IC)
+#print(IC)
 
 
 #індекс відповідності для біграм
@@ -96,7 +104,7 @@ N_bigrams = sum(bigram_counts.values())  # Загальна кількість �
 for freq in bigram_counts.values():
     head = freq * (freq - 1) 
     IC_bigrams += head / (N_bigrams * (N_bigrams - 1))
-print(IC_bigrams)
+#print(IC_bigrams)
 
 
 #отримання текстів різної довжини 
@@ -113,7 +121,7 @@ N = 1_000
 L_10_000 = random_texts(text_2, 10_000, N)
 
 
-print(L_10[:5])  
+#print(L_10[:5])  
 #print(L_100[:5])  
 
 
@@ -139,14 +147,13 @@ keys = {length: ''.join(random.choices(alphabet, k=length)) for length in key_le
 
 
 for length, key in keys.items():
-    encrypted_L = vigenere_cipher_encrypt_list(L_10[:5], key, alphabet)
+    encrypted_L = vigenere_cipher_encrypt_list(L_10, key, alphabet)
     print(f'\nКлюч длиной {length}: {key}')
-    print(f'Исходные строки: {L_10[:5]}')
+    print(f'Исходные строки: {L_10}')
     print(f'Зашифрованные строки: {encrypted_L}')
 
 
 #Віженер для біграм
-bigram_alphabet = [a + b for a in alphabet for b in alphabet]
 def vigenere_cipher_encrypt_bigram(text, key, bigram_alphabet):
     len_key = len(key)
     encode_text = ''
@@ -162,16 +169,16 @@ def vigenere_cipher_encrypt_bigram(text, key, bigram_alphabet):
 def vigenere_cipher_encrypt_bigram_list(L, key, bigram_alphabet):
     return [vigenere_cipher_encrypt_bigram(text, key, bigram_alphabet) for text in L]
 
-print('Віженер для біграм')
-key_lengths_input = input("Довжина ключа (наприклад, 1,5,10): ")
-key_lengths = [int(length.strip()) for length in key_lengths_input.split(',')]
-keys = {length: ''.join(random.choices(bigram_alphabet, k=length)) for length in key_lengths}
+#print('Віженер для біграм')
+#key_lengths_input = input("Довжина ключа (наприклад, 1,5,10): ")
+#key_lengths = [int(length.strip()) for length in key_lengths_input.split(',')]
+#keys = {length: ''.join(random.choices(bigram_alphabet, k=length)) for length in key_lengths}
 
-for length, key in keys.items():
-    encrypted_L = vigenere_cipher_encrypt_bigram_list(L_10[:5], key, bigram_alphabet)
-    print(f'\nКлюч длиной {length}: {key}')
-    print(f'Исходные строки: {L_10[:5]}')
-    print(f'Зашифрованные строки: {encrypted_L}')
+#for length, key in keys.items():
+    #encrypted_L = vigenere_cipher_encrypt_bigram_list(L_10[:5], key, bigram_alphabet)
+    #print(f'\nКлюч длиной {length}: {key}')
+    #print(f'Исходные строки: {L_10[:5]}')
+    #print(f'Зашифрованные строки: {encrypted_L}')
 
 
 
@@ -189,18 +196,18 @@ def affine_encrypt_mono(text, a, b, alphabet):
             encrypted_text += letter  
     return encrypted_text
 
-a = int(input('Введите значение a : '))
-b = int(input('Введите значение b : '))
-encrypted_L = [affine_encrypt_mono(text, a, b, alphabet) for text in L_10[:5]]
+#a = int(input('Введите значение a : '))
+#b = int(input('Введите значение b : '))
+#encrypted_L = [affine_encrypt_mono(text, a, b, alphabet) for text in L_10[:5]]
 
-print(f'Значення a={a}')
-print(f'Значення b={b}')
+#print(f'Значення a={a}')
+#print(f'Значення b={b}')
 
-print("\nИсходные тексты:")
-print(L_10[:5])
+#print("\nИсходные тексты:")
+#print(L_10[:5])
 
-print("\nЗашифрованные тексты:")
-print(encrypted_L)
+#print("\nЗашифрованные тексты:")
+#print(encrypted_L)
 
 
 def affine_encrypt_bigram(text, a, b, alphabet):
@@ -221,18 +228,18 @@ def affine_encrypt_bigram(text, a, b, alphabet):
     return encrypted_text
 
 
-a = int(input("Введите значение a: "))
-b = int(input("Введите значение b: "))
-encrypted_L = [affine_encrypt_bigram(text, a, b, alphabet) for text in L_10[:5]]
+#a = int(input("Введите значение a: "))
+#b = int(input("Введите значение b: "))
+#encrypted_L = [affine_encrypt_bigram(text, a, b, alphabet) for text in L_10[:5]]
 
-print(f'Значення a={a}')
-print(f'Значення b={b}')
+#print(f'Значення a={a}')
+#print(f'Значення b={b}')
 
-print("\nИсходные тексты:")
-print(L_10[:5])
+#print("\nИсходные тексты:")
+#print(L_10[:5])
 
-print("\nЗашифрованные тексты:")
-print(encrypted_L)
+#print("\nЗашифрованные тексты:")
+#print(encrypted_L)
 
 
 #Рівномірно розподілений шфир для символів
@@ -246,10 +253,10 @@ def norm_distrib_monogram(texts, alphabet, key):
         result.append(encrypted_text)
     return result
 
-C = norm_distrib_monogram(L_10[:5], alphabet, key)
-print(f'Открытый текст: {L_10[:5]}')
-print(f'Ключ: {"".join(key)}') 
-print(f'Зашифрованный текст: {C}')
+#C = norm_distrib_monogram(L_10[:5], alphabet, key)
+#print(f'Открытый текст: {L_10[:5]}')
+#print(f'Ключ: {"".join(key)}') 
+#print(f'Зашифрованный текст: {C}')
 
 
 
@@ -267,10 +274,10 @@ def norm_distrib_bigram(texts, bigram_alphabet, key):
         result.append(''.join(encrypted_text))  
     return result     
 
-C = norm_distrib_bigram(L_10[:5], bigram_alphabet, key)
-print(f'Открытый текст: {L_10[:5]}')
-print(f'Ключ: {"".join(key)}') 
-print(f'Зашифрованный текст: {C}')
+#C = norm_distrib_bigram(L_10[:5], bigram_alphabet, key)
+#print(f'Открытый текст: {L_10[:5]}')
+#print(f'Ключ: {"".join(key)}') 
+#print(f'Зашифрованный текст: {C}')
 
 
 #псевдорозподіл для монограм з рекурентою
@@ -289,9 +296,9 @@ def pseudo_random_mono(texts, alphabet):
     
     return result
 
-C = pseudo_random_mono(L_10[:5], alphabet)
-print(f'Открытый текст: {L_10[:5]}')
-print(f'Зашифрованный текст: {C}')
+#C = pseudo_random_mono(L_10[:5], alphabet)
+#print(f'Открытый текст: {L_10[:5]}')
+#print(f'Зашифрованный текст: {C}')
 
 
 
@@ -316,6 +323,43 @@ def pseudo_random_bigram(texts, bigram_alphabet):
     
     return result
 
-C = pseudo_random_bigram(L_10[:5], alphabet)
-print(f'Открытый текст: {L_10[:5]}')
-print(f'Зашифрованный текст: {C}')
+#C = pseudo_random_bigram(L_10[:5], alphabet)
+#print(f'Открытый текст: {L_10[:5]}')
+#print(f'Зашифрованный текст: {C}')
+
+
+
+#Множина найчастіших монограм (приблизно 5%)
+A_frq = freq_letters.most_common(3)
+print(A_frq)
+
+B_frq = bigram_counts.most_common(7)
+print(B_frq)
+
+
+
+# Функция для реализации критерия 2.0 для монограмм
+def criteria_20_monogram(L, A_frq):
+    """
+    Реализация критерия 2.0 для монограмм.
+
+    :param L: Список последовательностей (например, списки длины L)
+    :param A_frq: Множество частых монограмм
+    :return: Количество случаев H1 и H0
+    """
+    H1 = 0  # Случаи, когда принимается гипотеза H1 (найдена отсутствующая монограмма)
+    H0 = 0  # Случаи, когда принимается гипотеза H0 (все монограммы присутствуют)
+
+    # Преобразуем частотные монограммы в список
+    frequent_monograms = {char for char, _ in A_frq}
+
+    for sequence in L:
+        if any(char not in frequent_monograms for char in sequence):
+            H1 += 1
+        else:
+            H0 += 1
+
+    return f'H1 = {H1}, H0 = {H0}'
+
+result_monogram = criteria_20_monogram(vigenere_cipher_encrypt_list(L_10,key,alphabet), A_frq)
+print("Результат для монограмм:", result_monogram)
