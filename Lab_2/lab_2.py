@@ -432,7 +432,7 @@ def crit_22_monogram(L, A_frq, k_x=12):
     
     return f'H1 = {H1}, H0 = {H0}'
 
-#print(crit_21_bigram(encrypted_L, A_frq))
+#print(crit_22_monogram(encrypted_L, A_frq))
 
 
 #критерій 2.2 для біграм
@@ -457,7 +457,7 @@ def crit_22_bigram(L, B_frq, k_x=50):
     
     return f'H1 = {H1}, H0 = {H0}'
 
-#print(crit_21_bigram(encrypted_L, A_frq))
+#print(crit_22_bigram(encrypted_L, B_frq))
 
 #критерій 2.3 для монограм
 def crit_23_monogram(L, A_frq, K_f=11.5):
@@ -499,7 +499,7 @@ def crit_23_bigram(L, B_frq, K_f=35):
     
     return f'H1 = {H1}, H0 = {H0}'
 
-#print(crit_23_monogram(encrypted_L, B_frq))
+#print(crit_23_bigram(encrypted_L, B_frq))
 
 #критерій 4 для монограм
 def crit_40_monogram(L, K_I=0.005, IC=0.048965239404468015):
