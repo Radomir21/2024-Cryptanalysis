@@ -4,7 +4,7 @@ import math
 import random
 from random import shuffle
 import pickle
-
+import zlib
 
 #Словник
 alphabet='абвгдеєжзиіїйклмнопрстуфхцчшщьюя'
@@ -53,7 +53,7 @@ bigram_alphabet = [a + b for a in alphabet for b in alphabet]
 for bigram in bigram_alphabet:
     bigram_counts[bigram] = bigram_counts.get(bigram, 0)
 
-print(bigram_counts)
+#print(bigram_counts)
 
 
 #for bigram, count in bigram_counts.most_common():
@@ -95,7 +95,7 @@ N = sum(freq_letters.values())
 for freq in (freq_letters.values()):
     head = freq*(freq- 1)
     IC += head / (N * (N-1))  
-#print(IC)
+print(IC)
 
 
 #індекс відповідності для біграм
@@ -104,7 +104,7 @@ N_bigrams = sum(bigram_counts.values())  # Загальна кількість �
 for freq in bigram_counts.values():
     head = freq * (freq - 1) 
     IC_bigrams += head / (N_bigrams * (N_bigrams - 1))
-#print(IC_bigrams)
+print(IC_bigrams)
 
 
 #отримання текстів різної довжини 
@@ -112,13 +112,13 @@ def random_texts(text, L, N):
     indices = random.choices(range(len(text) - L + 1), k=N)
     return [text[i:i + L] for i in indices]
 
-N = 10_000
-L_10 = random_texts(text_2, 10, N)
-L_100 = random_texts(text_2, 100, N)
-L_1_000 = random_texts(text_2, 1000, N)
+#N = 10_000
+#L_10 = random_texts(text_2, 10, N)
+#L_100 = random_texts(text_2, 100, N)
+#L_1_000 = random_texts(text_2, 1000, N)
 
-N = 1_000
-L_10_000 = random_texts(text_2, 10_000, N)
+#N = 1_000
+#L_10_000 = random_texts(text_2, 10_000, N)
 
 
 #print(L_10[:5])  
@@ -140,17 +140,17 @@ def vigenere_cipher_encrypt(text, key, alphabet):
 def vigenere_cipher_encrypt_list(L, key, alphabet):
     return [vigenere_cipher_encrypt(text, key, alphabet) for text in L]
 
-print('Віженер для могонрам')
-key_lengths_input = input("Довжина ключа (наприклад, 1,5,10): ")
-key_lengths = [int(length.strip()) for length in key_lengths_input.split(',')]
-keys = {length: ''.join(random.choices(alphabet, k=length)) for length in key_lengths}
+#print('Віженер для могонрам')
+#key_lengths_input = input("Довжина ключа (наприклад, 1,5,10): ")
+#key_lengths = [int(length.strip()) for length in key_lengths_input.split(',')]
+#keys = {length: ''.join(random.choices(alphabet, k=length)) for length in key_lengths}
 
 
-for length, key in keys.items():
-    encrypted_L = vigenere_cipher_encrypt_list(L_10, key, alphabet)
-    print(f'\nКлюч длиной {length}: {key}')
-    print(f'Исходные строки: {L_10}')
-    print(f'Зашифрованные строки: {encrypted_L}')
+#for length, key in keys.items():
+    #encrypted_L = vigenere_cipher_encrypt_list(L_10, key, alphabet)
+    #print(f'\nКлюч длиной {length}: {key}')
+    #print(f'Исходные строки: {L_10}')
+    #print(f'Зашифрованные строки: {encrypted_L}')
 
 
 #Віженер для біграм
@@ -331,15 +331,15 @@ def pseudo_random_bigram(texts, bigram_alphabet):
 
 
 A_frq = freq_letters.most_common(3)
-print(A_frq)
+#print(A_frq)
 
 B_frq = bigram_counts.most_common(7)
-print(B_frq)
+#print(B_frq)
 
 
 
 #Критерий 2.0 для монограм
-def criteria_20_monogram(L, A_frq):
+def crit_20_monogram(L, A_frq):
     H0 = 0
     H1 = 0
     massive = {item[0] for item in A_frq}  
@@ -352,11 +352,11 @@ def criteria_20_monogram(L, A_frq):
     
     return f'H1 = {H1}, H0 = {H0}'
 
-print(criteria_20_monogram(encrypted_L, A_frq))
+#print(crit_20_monogram(encrypted_L, A_frq))
 
 
 #Критерий 2.0 для біграм
-def criteria_20_bigram(L, B_frq):
+def crit_20_bigram(L, B_frq):
     H0 = 0
     H1 = 0
 
@@ -370,10 +370,10 @@ def criteria_20_bigram(L, B_frq):
     
     return f'H1 = {H1}, H0 = {H0}'
 
-print(criteria_20_bigram(encrypted_L, B_frq))
+#print(crit_20_bigram(encrypted_L, B_frq))
 
-
-def criteria_21_monogram(L, A_frq, kf=2):
+#Критерий 2.1 для монограм
+def crit_21_monogram(L, A_frq, kf=2):
     H0 = 0
     H1 = 0
     massive = {item[0] for item in A_frq}  # Множество символов из A_frq
@@ -382,36 +382,254 @@ def criteria_21_monogram(L, A_frq, kf=2):
         # Множество Aaf для текущей строки
         Aaf = {char for char in L[i] if char in massive}
         
-        # Проверяем условие: |Aaf ∩ A_frq| ≤ kf
+        # Проверяем условие ≤ kf
         if len(Aaf & massive) <= kf:
-            H1 += 1  # Принимается гипотеза H1
+            H1 += 1  
         else:
-            H0 += 1  # Принимается гипотеза H0
+            H0 += 1  
     
     return f'H1 = {H1}, H0 = {H0}'
 
+#print(crit_21_monogram(encrypted_L, A_frq))
 
-
-
-print(criteria_21_monogram(encrypted_L, A_frq))
-
-
-def criteria_21_bigram(L, B_frq, kf=4):
+#Критерий 2.1 для біграм
+def crit_21_bigram(L, B_frq, kf=4):
     H0 = 0
     H1 = 0
-    # Преобразуем B_frq в множество биграмм
-    massive = {item[0] for item in B_frq}  # Множество биграмм из B_frq
+    massive = {item[0] for item in B_frq}  
     
     for i in range(len(L)):
-        # Извлекаем биграммы из строки L[i]
         Aaf = {L[i][j:j+2] for j in range(len(L[i]) - 1) if L[i][j:j+2] in massive}
         
-        # Проверяем условие: |Aaf ∩ B_frq| ≤ kf
         if len(Aaf & massive) <= kf:
-            H1 += 1  # Принимается гипотеза H1
+            H1 += 1  
         else:
-            H0 += 1  # Принимается гипотеза H0
+            H0 += 1  
     
     return f'H1 = {H1}, H0 = {H0}'
 
-print(criteria_21_bigram(encrypted_L, B_frq))
+#print(crit_21_bigram(encrypted_L, B_frq))
+
+#критерій 2.2 для монограм
+def crit_22_monogram(L, A_frq, k_x=12):
+    H0 = 0
+    H1 = 0
+    
+    massive = {key: 0 for key in A_frq}
+    
+    for sequence in L:
+        freq_map = massive.copy()
+        
+        for char in sequence:
+            if char in freq_map:
+                freq_map[char] += 1
+        
+        # Проверяем, есть ли символы с частотой < k_x
+        if any(freq < k_x for freq in freq_map.values()):
+            H1 += 1
+        else:
+            H0 += 1
+    
+    return f'H1 = {H1}, H0 = {H0}'
+
+#print(crit_21_bigram(encrypted_L, A_frq))
+
+
+#критерій 2.2 для біграм
+def crit_22_bigram(L, B_frq, k_x=50):
+    H0 = 0
+    H1 = 0
+
+    bigram_freq_template = {key: 0 for key in B_frq}
+    
+    for sequence in L:
+        bigram_freq = bigram_freq_template.copy()
+        
+        for j in range(len(sequence) - 1):
+            bigram = sequence[j:j + 2]
+            if bigram in bigram_freq:
+                bigram_freq[bigram] += 1
+        
+        if any(freq < k_x for freq in bigram_freq.values()):
+            H1 += 1
+        else:
+            H0 += 1
+    
+    return f'H1 = {H1}, H0 = {H0}'
+
+#print(crit_21_bigram(encrypted_L, A_frq))
+
+#критерій 2.3 для монограм
+def crit_23_monogram(L, A_frq, K_f=11.5):
+    H0 = 0
+    H1 = 0
+    massive = set(A_frq.keys())  
+    
+    for seq in L:
+        freq = Counter(c for c in seq if c in massive)
+
+        S = sum(freq.values())
+        
+        if S < K_f:
+            H1 += 1
+        else:
+            H0 += 1
+    
+    return f'H1 = {H1}, H0 = {H0}'
+
+#print(crit_23_monogram(encrypted_L, A_frq))
+
+#критерій 2.3 для біграм
+def crit_23_bigram(L, B_frq, K_f=35):
+    H0 = 0
+    H1 = 0
+    
+    massive = set(B_frq.keys())
+    
+    for seq in L:
+        bigrams = [seq[i] + seq[i + 1] for i in range(len(seq) - 1)]
+        freq = Counter(b for b in bigrams if b in massive)
+        
+        S = sum(freq.values())
+        
+        if S < K_f:
+            H1 += 1
+        else:
+            H0 += 1
+    
+    return f'H1 = {H1}, H0 = {H0}'
+
+#print(crit_23_monogram(encrypted_L, B_frq))
+
+#критерій 4 для монограм
+def crit_40_monogram(L, K_I=0.005, IC=0.048965239404468015):
+    H0 = 0
+    H1 = 0
+    
+    for seq in L:
+        f_massive = {elem: 0 for elem in freq_letters}
+        for char in seq:
+            if char in f_massive:
+                f_massive[char] += 1
+
+        index = sum(f_massive[elem] * (f_massive[elem] - 1) for elem in f_massive)
+        length = len(seq)
+        index = index / (length * (length - 1)) if length > 1 else 0
+        
+        if abs(index - IC) > K_I:
+            H1 += 1
+        else:
+            H0 += 1
+    
+    return f'H1 = {H1}, H0 = {H0}'
+
+#print(crit_40_monogram(encrypted_L, K_I=0.005, IC=0.048965239404468015))
+
+#критерій 4 для біграм
+def crit_40_bigram(L, K_I=0.015, IC_bigrams=0.004157201662258474):
+    H0 = 0
+    H1 = 0
+    
+    for seq in L:
+        f_massive = {}
+        for i in range(len(seq) - 1):
+            bigram = seq[i] + seq[i + 1]
+            f_massive[bigram] = f_massive.get(bigram, 0) + 1
+        
+        index = sum(f_massive[bigram] * (f_massive[bigram] - 1) for bigram in f_massive)
+        length = len(seq)
+        index = index / (length * (length - 1)) if length > 1 else 0
+
+        if abs(index - IC_bigrams) > K_I:
+            H1 += 1
+        else:
+            H0 += 1
+    
+    return f'H1 = {H1}, H0 = {H0}'
+
+#print(crit_40_bigram(encrypted_L,K_I=0.015, IC_bigrams=0.004157201662258474))
+
+#критерій 5 для монограм
+def crit_50_monogram(L, A_frq, k_empt=0):
+    H0 = 0
+    H1 = 0
+    
+    for seq in L:
+        f_massive = {key: 0 for key in A_frq}
+        
+        for char in seq:
+            if char in f_massive:
+                f_massive[char] += 1
+        
+        f_empt = sum(1 for count in f_massive.values() if count == 0)
+        
+        if f_empt <= k_empt:
+            H1 += 1
+        else:
+            H0 += 1
+    
+    return f'H1 = {H1}, H0 = {H0}'
+
+#print(crit_50_monogram(encrypted_L, A_frq,k_empt=0 ))
+
+
+#критерій 5 для біграм
+def crit_50_bigram(L, B_frq, k_empt=200):
+    H0 = 0
+    H1 = 0
+    
+    for seq in L:
+        f_massive = {key: 0 for key in B_frq}
+        
+        for j in range(len(seq) - 1):
+            symbol = seq[j] + seq[j + 1]
+            if symbol in f_massive:
+                f_massive[symbol] += 1
+
+        f_empt = sum(1 for count in f_massive.values() if count == 0)
+
+        if f_empt <= k_empt:
+            H1 += 1
+        else:
+            H0 += 1
+    
+    return f'H1 = {H1}, H0 = {H0}'
+
+#print(crit_50_bigram(encrypted_L, B_frq,k_empt=200))
+
+
+
+#cтрукутрний критерий 
+def calculate_compression_ratio(text, length):
+    return length / len(zlib.compress(text.encode('utf-8')))
+
+def structure_criteria(text, limit=0.1):
+    H1 = 0
+    text_len = len(text)
+    length = len(text[0])
+    random_sequences = [''.join(random.choices(alphabet, k=length)) for _ in range(text_len)]
+    
+    random_values = [calculate_compression_ratio(seq, length) for seq in random_sequences]
+    real_values = [calculate_compression_ratio(seq, length) for seq in text]
+    
+    H1 = sum(abs(random_values[i] - real_values[i]) > limit for i in range(text_len))
+
+    return f'H1 = {H1}, H0 = {text_len - H1}'
+
+# Пример использования
+#print(structure_criteria(L_100))
+#print(structure_criteria(vigenere_cipher_encrypt_list(L_100)))
+
+
+
+def generate_sequense(alphabet, num_strings=10000, block_size=1000):
+    return [''.join([random.choice(alphabet) * block_size, random.choice(alphabet) * block_size])for _ in range(num_strings)]
+
+L_seq = generate_sequense(alphabet)
+#print(L_seq)
+
+
+#print(crit_22_monogram(vigenere_cipher_encrypt_bigram_list(L_seq), A_frq))
+#print(crit_22_monogram(vigenere_cipher_encrypt_bigram_list(L_100), A_frq))
+#print(crit_22_monogram(vigenere_cipher_encrypt_bigram_list(L_seq), B_frq))
+#print(crit_22_monogram(vigenere_cipher_encrypt_bigram_list(L_100), B_frq))
