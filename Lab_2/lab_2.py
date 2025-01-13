@@ -329,7 +329,7 @@ def pseudo_random_bigram(texts, bigram_alphabet):
 
 
 
-#Множина найчастіших монограм (приблизно 5%)
+
 A_frq = freq_letters.most_common(3)
 print(A_frq)
 
@@ -338,28 +338,80 @@ print(B_frq)
 
 
 
-# Функция для реализации критерия 2.0 для монограмм
+#Критерий 2.0 для монограм
 def criteria_20_monogram(L, A_frq):
-    """
-    Реализация критерия 2.0 для монограмм.
-
-    :param L: Список последовательностей (например, списки длины L)
-    :param A_frq: Множество частых монограмм
-    :return: Количество случаев H1 и H0
-    """
-    H1 = 0  # Случаи, когда принимается гипотеза H1 (найдена отсутствующая монограмма)
-    H0 = 0  # Случаи, когда принимается гипотеза H0 (все монограммы присутствуют)
-
-    # Преобразуем частотные монограммы в список
-    frequent_monograms = {char for char, _ in A_frq}
-
-    for sequence in L:
-        if any(char not in frequent_monograms for char in sequence):
-            H1 += 1
+    H0 = 0
+    H1 = 0
+    massive = {item[0] for item in A_frq}  
+    for i in range(len(L)):
+  
+        if any(elem in L[i] for elem in massive):
+            H0 += 1 
         else:
-            H0 += 1
-
+            H1 += 1  
+    
     return f'H1 = {H1}, H0 = {H0}'
 
-result_monogram = criteria_20_monogram(vigenere_cipher_encrypt_list(L_10,key,alphabet), A_frq)
-print("Результат для монограмм:", result_monogram)
+print(criteria_20_monogram(encrypted_L, A_frq))
+
+
+#Критерий 2.0 для біграм
+def criteria_20_bigram(L, B_frq):
+    H0 = 0
+    H1 = 0
+
+    bigrams = {item[0] for item in B_frq} 
+    print(bigrams)
+    for i in range(len(L)):
+        if any(elem in L[i] for elem in bigrams):
+            H0 += 1  
+        else:
+            H1 += 1  
+    
+    return f'H1 = {H1}, H0 = {H0}'
+
+print(criteria_20_bigram(encrypted_L, B_frq))
+
+
+def criteria_21_monogram(L, A_frq, kf=2):
+    H0 = 0
+    H1 = 0
+    massive = {item[0] for item in A_frq}  # Множество символов из A_frq
+    
+    for i in range(len(L)):
+        # Множество Aaf для текущей строки
+        Aaf = {char for char in L[i] if char in massive}
+        
+        # Проверяем условие: |Aaf ∩ A_frq| ≤ kf
+        if len(Aaf & massive) <= kf:
+            H1 += 1  # Принимается гипотеза H1
+        else:
+            H0 += 1  # Принимается гипотеза H0
+    
+    return f'H1 = {H1}, H0 = {H0}'
+
+
+
+
+print(criteria_21_monogram(encrypted_L, A_frq))
+
+
+def criteria_21_bigram(L, B_frq, kf=4):
+    H0 = 0
+    H1 = 0
+    # Преобразуем B_frq в множество биграмм
+    massive = {item[0] for item in B_frq}  # Множество биграмм из B_frq
+    
+    for i in range(len(L)):
+        # Извлекаем биграммы из строки L[i]
+        Aaf = {L[i][j:j+2] for j in range(len(L[i]) - 1) if L[i][j:j+2] in massive}
+        
+        # Проверяем условие: |Aaf ∩ B_frq| ≤ kf
+        if len(Aaf & massive) <= kf:
+            H1 += 1  # Принимается гипотеза H1
+        else:
+            H0 += 1  # Принимается гипотеза H0
+    
+    return f'H1 = {H1}, H0 = {H0}'
+
+print(criteria_21_bigram(encrypted_L, B_frq))
