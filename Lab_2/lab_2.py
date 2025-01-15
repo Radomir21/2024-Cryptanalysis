@@ -29,7 +29,7 @@ with open(output_text_1 ,'w',encoding="utf8") as file:
 
 #необхiдно розрахувати частоти лiтер i бiграм, а також ентропiю та iндекс вiдповiдностi.
 freq_letters = Counter(text_2)
-
+print(freq_letters)
 total_letters_sum = sum(freq_letters.values())
 
 p = []
