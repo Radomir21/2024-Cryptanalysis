@@ -1,12 +1,16 @@
+import time
 #Варіант 18
 #Атака на основі КТЛ
+print("------------------------------------------------------------------")
+print("Атака на основі КТЛ")
+print("------------------------------------------------------------------")
 def extended_gcd(a, b):
-    if a == 0:
-        return b, 0, 1
-    gcd, u_1, v_1 = extended_gcd(b % a, a)
-    u = v_1 - (b // a) * u_1
-    v = u_1
-    return gcd, u, v
+    x0, x1, y0, y1 = 1, 0, 0, 1
+    while b != 0:
+        q, a, b = a // b, b, a % b
+        x0, x1 = x1, x0 - q * x1
+        y0, y1 = y1, y0 - q * y1
+    return a, x0, y0
 
 def chinese_thereom(C, N):
     if len(C) != len(N):
@@ -29,7 +33,7 @@ def integer_nth_root(x, n):
             low = mid
     return low
 
-# values
+
 C = [
 0x2c4321c14574d7a0ffbb2ad8e5f56f87a085f841bb236fcf1c352a19b833dece89b6bd6c4e6363d05dc13004962308fffbd15bab8a62c312a8d52894e2d7ce19ae0a93e250e2eba96355995d772574c0413ba0f3ee6e79507450bdda35c682ea5384a8089eaddcb5026cb4bddffe13b898353bde6a1ca106cd71f451c305a280,
 0x61474ab337b37339b596f18333a065103be9087df471db7a56907a593eb195432ca9ed0199514f79d7a49493f38212eb129ff6da867871f0c4d3d004d79fcc2df8af5fea8459d67fb2b87b1a8d076546384debb122d6ae83d7f82bd373dbcbfd05752455bef80a82f106bc025d24789603c9b341bb038e41cb919ab4a180f7d6,
@@ -50,8 +54,74 @@ E = [2,3,4,5,6,7,8]
 
 main_C = chinese_thereom(C, N)
 print(f"Шифротекст:\n {hex(main_C)}")
-
+print("------------------------------------------------------------------")
 for i in E:
     message = integer_nth_root(main_C, i)
-    print(f"E={i} Повідомлення (hex): {hex(message)}")
+    print(f"E= {i} Повідомлення (hex): {hex(message)}")
+    print("------------------------------------------------------------------")
     print(f"Перевірка: {message ** i == main_C}")
+
+print("------------------------------------------------------------------")
+print("Атака зустріч по середині")
+#Атака зустріч по середині 
+C = 0xc8b6377c4dc990bae0286c4a53c3ce948f19b9d89a133da874b3cd42cb3bd76e8beb407fa0d804435b26f99934d8c7a9d8703c0bdce01dde48ad35f837f7b5114aa0b82fb5c5c79048b1907b63f3d439c54926cdc11d91b5cdc482c633c3995b0055262b3b3f1761c215ab779cb4da764f4e0419272f2a9fd8a2de223eb0ae4bc780d10e9bbb78ad33b356dbdddfbaab93b12b0c67b2761291870312b573df44b93c6c839ddd175b3a1b427c38a6235990007e378d0ea1905ed7c97a1ce3e2b5905a0afd5b3c6f49990ff75bb1c3b9b29417311b7feec6e4e4e10534abd00a9e928846941acf62f7040e91eef1abc6ecdde9dcf9add78162cb0cab4cc7697f94
+N = 0xCC16EC18C48A65416682B065DA0B6C34767797B6C4A093BEBCB4873DAFA16DDBD80C0F9406C64EBEF001E4731283FCE334FD8C19EF2AFFA21EC66784B399AAD0A5AAFEBC3B56251D512B3EA1DC66A811E09471AF8DB45A8D8EB54676116D197B327E795FC91F1F63228AB101304DBE8E71CBBD74BA318F94538F722F637ECF7AB747B084094D609026F1EE6AD842C4BA302B488C70650C7C429C2317ADF3AA0082966629C7AC5FAAD9F1BFA288368512329622AF8CB09AA284DC6D6C578E50DA3B8377C6BAACA04FC965DD728125ACE0E353E12690F72938DE55006AA86FD4A64EC49C767FB156AA165A10BC7968067DD71E1C6B91C55D74EACDF9AAA9294941
+l = 20
+exp = 65537
+
+
+X_1 = [i for i in range(1, 2 ** (l // 2) + 1)]
+X_2 = [pow(i, exp, N) for i in X_1]
+
+
+def mod_inverse(a, m):
+    result = extended_gcd(a, m)
+    g, x = result[0], result[1]  
+    if g != 1:
+        raise ValueError('Оберненого не існує')
+    return x % m
+
+C_s = [(C * mod_inverse(i, N)) % N for i in X_2]
+
+
+def mitm_attack(C_s, X_2):
+    elem_map = {value: i + 1 for i, value in enumerate(X_2)}
+    for i, c in enumerate(C_s):
+        if c in elem_map:
+            return i + 1, elem_map[c]
+    raise ValueError("Відкритий текст не було визначено")
+
+result = mitm_attack(C_s, X_2)
+print("------------------------------------------------------------------")
+print(f'M1: {result[0]}, M2: {result[1]}\n M: {result[0]*result[1]}')
+
+def verification(result, C, N, exp):
+    if result != 0:
+        if pow(result[0] * result[1], exp, N) == C:
+            print(True)
+        else:
+            print(False)
+    else:
+        raise ValueError("Помилка")
+
+print('Перевірка:')
+verification(result, C, N, exp)
+
+
+def brute_force_attack(C_s, X_2, N, exp, C):
+    for open_text in range(1, len(X_2) + 1):
+        if pow(open_text, exp, N) in C_s:
+            return open_text  
+    raise ValueError("Відкритий текст не було визначено")
+
+print("------------------------------------------------------------------")
+start_time = time.time()
+result = mitm_attack(C_s, X_2)
+print("Атака зустріч по середині: %s секунд" % (time.time() - start_time))
+
+start_time = time.time()
+brute_force_attack(C_s, X_2, N, exp, C)
+print("Атака повного перебору: %s секунд" % (time.time() - start_time))
+
+
+
