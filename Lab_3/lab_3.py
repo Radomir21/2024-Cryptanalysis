@@ -49,7 +49,7 @@ N = [
 0xE6A9E99BF599FB422EC5F462570FE1CC426E0179B5BCFD050CC43F6980C62B4639D3A893490C0A2A7A5B5AAA5A1E0D580B7C1F5C9B2908A44B22B8695C14388EFEDF97F8D57ADAFDBC278F38F67576B43C1219B99C26ECD71BE8CF82CB95DCD83719163F3F32FCD8DAD7AA212FBA1D0D4654DEE68F68E7EB068DDBACC35C8B27
 ]
 
-E = [2,3,4,5,6,7,8]
+E = [2,3,4,5]
 
 
 main_C = chinese_thereom(C, N)
@@ -57,8 +57,8 @@ print(f"Шифротекст:\n {hex(main_C)}")
 print("------------------------------------------------------------------")
 for i in E:
     message = integer_nth_root(main_C, i)
-    print(f"E= {i} Повідомлення (hex): {hex(message)}")
     print("------------------------------------------------------------------")
+    print(f"E= {i} Повідомлення (hex): {hex(message)}")
     print(f"Перевірка: {message ** i == main_C}")
 
 print("------------------------------------------------------------------")
