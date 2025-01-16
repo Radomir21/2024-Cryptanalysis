@@ -124,4 +124,6 @@ brute_force_attack(C_s, X_2, N, exp, C)
 print("Атака повного перебору: %s секунд" % (time.time() - start_time))
 
 
-
+mitm = 0.0007166862487792969
+bf = 0.06906390190124512
+print(f'Атака зустріч по середині швидше у {bf/mitm}')
